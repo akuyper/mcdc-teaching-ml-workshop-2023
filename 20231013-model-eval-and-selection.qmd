@@ -2,6 +2,7 @@
 title: "Model Evaluation & Selection"
 subtitle: "MCDC Virtual Workshop on<br>Teaching Introductory Machine Learning"
 date: today
+
 format: 
   revealjs:
     theme: [default, custom.scss]
@@ -10,11 +11,12 @@ format:
     slide-number: c/t
     transition: fade
     background-transition: fade
-    # self-contained: true
+    embed-resources: true
     
 title-slide-attributes:
     data-background-image: https://www.northwestern.edu/brand/images/zoom-academic-facets.jpg
-    data-background-size: cover
+    # change from cover to contian for printing pdf
+    data-background-size: contain
     data-heading-color: "#FFFFFF"
     
 revealjs-plugins:
@@ -30,547 +32,127 @@ editor:
     wrap: 72
 ---
 
-## Key Personnel {.smaller}
+## Quick overview of context
 
-::: columns
-::: {.column width="50%"}
-::: {.fragment fragment-index="1"}
-### <br/> Professor Sandy Zabell
+Where does model evaluation and selection come up during an introductory
+machine learning course?
 
-<!-- ![](https://www.statistics.northwestern.edu/images/faculty/sandy-zabell.jpg){fig-align="left"} -->
+. . .
 
-Director of Undergraduate Studies <br /> Primary adviser for majors &
-minors in Statistics <br /> **zabell\@math.northwestern.edu**
-:::
+1.  Early on, maybe first day --- How do we know if a model is any good?
 
-::: {.fragment fragment-index="3"}
-### <br/> Deric Holloway
+2.  During model building/training --- How to pick the "best" model?
 
-<!-- ![](https://www.statistics.northwestern.edu/images/faculty/sandy-zabell.jpg){fig-align="left"} -->
+3.  Discussion of final model --- How will the final model preform?
 
-Undergraduate Program Assistant <br /> Communications hub for Data
-Science programs <br /> **deric.holloway\@northwestern.edu**
-:::
-:::
+. . .
 
-::: {.column width="50%"}
-::: {.fragment fragment-index="2"}
-### Assistant Professor of Instruction Arend Kuyper
+### Important related concepts/topics:
 
-<!-- ![](https://www.statistics.northwestern.edu/images/faculty/Kuyper_Arend_160x210.jpg){fig-align="left"} -->
+Data spending/allocation, performance vs comparisons, overfitting,
+bias-variance trade-off, metrics, & explaining models
 
-Director of Data Science <br /> Primary adviser for majors & minors in
-Data Science <br /> **a-kuyper\@northwestern.edu**
-:::
+## Supervised learning schema
 
-::: {.fragment fragment-index="4"}
-### <br/> Kisa Kowal
+![A schematic for the typical modeling process from [Tidymodeling with
+R](https://www.tmwr.org/)](image/modeling-process.png){fig-align="center"
+width="500"}
 
-<!-- ![](https://www.statistics.northwestern.edu/images/faculty/sandy-zabell.jpg){fig-align="left"} -->
+## How do we know if a model is any good?
 
-Business Administrator <br /> **k-kowal\@northwestern.edu**
-:::
-:::
-:::
+Main objective is prediction!
 
-## Undergraduate Programs Offered
+Take a set of predictors/features $X$ and use them to predict an
+outcome/target $Y$
 
-::: {.fragment .fade-in-then-semi-out}
-Statistics Major (9 courses + 2 years calculus)
-:::
+$$\widehat{Y} = \widehat{f}(X)$$ This assumes there exists an $f()$ such
+that $Y = f(X) + \epsilon$ ... the truth!
 
-::: {.fragment .fade-in-then-semi-out}
-Statistics Minor (6 courses + 2 years calculus)
-:::
+Assess the residuals/errors!
 
-::: {.fragment .fade-in-then-semi-out}
-Data Science Major (14 courses + 2 years calculus)
-:::
+$$Y - \widehat{Y} = f(X) - \widehat{f}(X) + \epsilon$$
 
-::: {.fragment .fade-in-then-semi-out}
-Data Science Minor (6 courses)
-:::
+## Residuals
 
-::: {.fragment .fade-in-then-semi-out}
-Combined BA (Or BS)/MS --- see website for details
-:::
+![](image/residuals.png){fig-align="center" width="300"}
 
-## What is a Statistics or Data Science degree good for? {.smaller}
+## Mean Squared Error
 
-::: columns
-::: {.column width="50%"}
-::: fragment
-The short answer: **nowadays, almost anything!**
+$$E[(Y - \widehat{Y})^2] = E[(f(X) - \widehat{f}(X))^2] +  \mbox{var}(\epsilon)$$
 
-For example:
+. . .
 
--   The financial sector
--   Epidemiology and biostatistics
--   The pharmaceutical industry 
--   The insurance industry
--   US government 
--   Big technology (Google, Amazon, Microsoft, ...)
--   Sports Organizations
--   Entertainment industry
+-   Reducible error vs irreducible error
 
-All of these need tools for the collection, summarization, and analysis
-of vast amounts of data.
-:::
-:::
+-   Overfitting
 
-::: {.column width="50%"}
-::: r-stack
-::: {.fragment .fade-in-then-out}
-**Graduates with Statistics Major**
+-   Training vs Testing (Data spending/ allocation)
 
-![](image/major-breakdown-ay23.png){fig-align="center"}
+## Classification
 
-<br /> <br />
-:::
+![](image/confusion-matrix.png){fig-align="center" width="1028"}
 
-::: fragment
-**Companies employing Northwestern Statistics Majors:**
+## Initial data split
 
-IBM, Analysis Group, Nielsen, Google, Facebook, Microsoft, Bank of
-America, JP Morgan Chase, Bloomberg, Linkedin, US Census Bureau, US
-Forest Service, Giants (MLB), Blue Jays (MLB), Paramount Pictures, ...
-
-<br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
-<br /> <br /> <br />
-:::
-:::
-:::
-:::
+Avoiding overfitting & the goal is out of sample performance estimate
 
-## Statistics Major & Minor Mathematics Prerequisites {.smaller}
+![](image/initial-split.png){fig-align="center" width="800"}
 
-::: columns
-::: {.column width="50%"}
-::: {.fragment .fade-in-then-semi-out fragment-index="1"}
-### First-year calculus
+## Supervised learning schema
 
-**Courses (Standard Sequence):**
+![A schematic for the typical modeling process from [Tidymodeling with
+R](https://www.tmwr.org/)](image/modeling-process.png){fig-align="center"}
 
--   MATH 220-1
--   MATH 220-2
--   MATH 226
-:::
+## Splitting data for training
 
-::: {.fragment .fade-in-then-semi-out fragment-index="3"}
-<br /> <br />
+Pick an evaluation metric for model comparisons!
 
-### Second-year calculus
+![](image/training-splits.png){fig-align="center" width="800"}
 
-**Courses (Standard Sequence):**
+# Which metric matters!
 
--   MATH 230-1
--   MATH 230-2
--   MATH 240
-:::
-:::
+![](image/metrics-matter.png){fig-align="center"}
 
-::: {.column width="50%"}
-::: {.fragment .fade-in-then-semi-out fragment-index="2"}
-**AP Placement for first-year calculus:**
+## Common Metrics
 
--   AP Calculus AB
-    -   Score 4 = MATH 220-1
-    -   Score 5 = MATH 220-1 & 220-2
--   AP Calculus BC
-    -   Score 4 = MATH 220-1 & 220-2
-    -   Score 5 = MATH 220-1, 220-2, & 226\*
+### Regression 
 
-\*AP Exams taken after calendar year 2020
-:::
+- Mean squared error (MSE)
+- Root Mean Squared error (RMSE)
+- R-squred (RSQ or $R^2$)
+- Mean absolute error/difference (MAE or MAD)
+- many more ...
 
-::: {.fragment .fade-in-then-semi-out fragment-index="4"}
+### Classification
 
-------------------------------------------------------------------------
+- Accuracy 
+- Area under the curve (AUC)
+- Recall
+- Sensitivity
+- many more ...
 
-**Alternative tracks for second-year calculus:**
+## Selecting the "best" model
 
--   MATH 281 series (ISP Students)
--   MATH 285 series (MMSS Students)
--   MATH 290 series (MENU option I)
--   MATH 291 series (MENU option II)
-:::
-:::
-:::
+- Don't always have to go with best performing model
 
-## Statistics Major Requirements {.smaller}
+- 1 standard error rule: Are the competing models really preforming differently?
 
-::: columns
-::: {.column width="55%"}
-::: {.fragment .fade-in fragment-index="1"}
-### 9 Required Courses
-:::
+- Occam's Razor or KISS 
 
-::: {.fragment .fade-in-then-semi-out fragment-index="2"}
-Introductory Statistics course: <br /> STAT 202, 210, or AP Statistics
-(4 or 5)
-:::
+## Evaluating the final model
 
-::: {.fragment .fade-in-then-semi-out fragment-index="3"}
-Foundational courses (4): <br /> STAT 320-1,-2,-3 Statistical Theory &
-Methods <br /> STAT 350 Regression Analysis (Fall)
-:::
+- Using the test data
 
-::: {.fragment .fade-in-then-semi-out fragment-index="4"}
-Standard methods course (1): <br /> 
-STAT 348 Applied Multivariate Analysis or <br /> 
-STAT 351 Design and Analysis of Experiments  or<br /> 
-STAT 354 Applied Time Series Modeling
-:::
+- Not restricted to metric used for comparison!
 
-::: {.fragment .fade-in-then-semi-out fragment-index="5"}
-[300-level Statistics electives (3)](https://statistics.northwestern.edu/undergraduate/stat_major/electives_for_-stat_major.html){preview-link="true"}
-:::
-:::
+- Might use metrics that are easier to explain
 
-::: {.column width="40%"}
-::: {.fragment .fade-in fragment-index="3"}
-### Important Notes
-:::
+- Be careful of causal interpretations 
 
-::: {.fragment .fade-in-then-semi-out fragment-index="3"}
-MATH 230-2 & MATH 226 are corequisites for STAT 320-1
+## Things to keep in mind
 
-MATH 240 is a prerequisite for STAT 320-3
-:::
-
-::: {.fragment .fade-in fragment-index="6"}
-
-------------------------------------------------------------------------
-
-### Honors
-
-Majors can also opt to take honors, writing an honors thesis under the
-supervision of a faculty member in their senior year
-:::
-:::
-:::
-
-## Statistics Minor Requirements {.smaller}
-
-::: columns
-::: {.column width="55%"}
-::: {.fragment .fade-in-then-semi-out}
-### 6 Required Courses
-
-Introductory Statistics course: <br /> STAT 202, 210, or AP Statistics
-(4 or 5)
-
-Foundational courses (4): <br /> STAT 320-1,-2,-3 Statistical Theory &
-Methods <br /> STAT 350 Regression Analysis (Fall)
-
-Standard methods course (1): <br /> 
-STAT 348 Applied Multivariate Analysis or <br /> 
-STAT 351 Design and Analysis of Experiments or <br /> 
-STAT 354 Applied Time Series Modeling
-
-~~300-level Statistics electives (3)~~
-:::
-:::
-
-::: {.column width="40%"}
-::: {.fragment .fade-in}
-**Alternatives to STAT 320-1 for either the Major or Minor:**
-
-STAT 383-0 <br /> MATH 310-1 <br /> MATH 311-1 <br /> MATH 314-0 <br />
-MATH 385-0 <br /> EECS 302-0 <br /> IEMS 202-0\*
-:::
-:::
-:::
-
-##  {.unnumbered}
-
-<br /> <br />
-
-![](image/pngfind.com-question-marks-png-329882.png){fig-align="center"
-width="700"}
-
-## Data Science Major Related Math Requirements {.smaller}
-
-::: columns
-::: {.column width="50%"}
-::: {.fragment .fade-in-then-semi-out}
-### First-year calculus
-
-**Courses (Standard Sequence):**
-
--   MATH 220-1
--   MATH 220-2
--   ~~MATH 226~~ (Substituted by STAT 228\*)
-
-<br /> <br />
-
-### Second-year calculus
-
-**Courses (Standard Sequence):**
-
--   MATH 230-1
--   ~~MATH 230-2~~ (Substituted by STAT 228\*)
--   MATH 230-2
-
-<!-- ### Optional Adjustment -->
-
-<!-- STAT 228 or <br /> -->
-
-<!-- MATH 226 and MATH 230-2  -->
-:::
-:::
-
-::: {.column width="50%"}
-::: {.fragment .fade-in-then-semi-out}
-**AP Placement for first-year calculus:**
-
--   AP Calculus AB
-    -   Score 4 = MATH 220-1
-    -   Score 5 = MATH 220-1 & 220-2
--   AP Calculus BC
-    -   Score 4 = MATH 220-1 & 220-2
-    -   Score 5 = MATH 220-1, 220-2, & 226\*
-
-\*AP Exams taken after calendar year 2020
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-
-------------------------------------------------------------------------
-
-**Alternative tracks for second-year calculus:**
-
--   MATH 281 series (ISP Students)
--   MATH 285 series (MMSS Students)
--   MATH 290 series (MENU option I)
--   MATH 291 series (MENU option II)
-:::
-:::
-:::
-
-## Data Science Major Requirements {.smaller}
-
-::: columns
-::: {.column width="45%"}
-::: {.fragment .fade-in fragment-index="1"}
-### Related Requirements (8)
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="2"}
-Mathematics courses (4)
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="3"}
-Introductory Computer Science (1): <br /> COMP_SCI 110, COMP_SCI 111, or
-<br /> STAT 201 Intro to programming for Data Science
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="4"}
-[Technical and Domain Science Electives
-(2)](https://statistics.northwestern.edu/undergraduate/data_science_major/technical-and-domain-science-electives.html){preview-link="true"}
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="5"}
-[Ethics elective
-(1)](https://statistics.northwestern.edu/undergraduate/data_science_major/ethics-elective.html){preview-link="true"}
-:::
-
-::: {.fragment .fade-in fragment-index="11"}
-
-------------------------------------------------------------------------
-
-### Honors
-
-Majors can also opt to take honors, writing an honors thesis under the
-supervision of a faculty member in their senior year
-:::
-:::
-
-::: {.column width="55%"}
-::: {.fragment .fade-in fragment-index="6"}
-### Required major courses (11)
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="7"}
-Foundational courses (4): <br /> STAT 202, 210, or AP Statistics (4 or
-5) <br /> STAT 228 Series and Multiple Integrals <br /> STAT 320-1 & -2
-Statistical Theory and Methods
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="8"}
-Data science core courses (6): <br /> STAT 301/303-1,-2,-3 Data Science
-1, 2, & 3 <br /> STAT 304 Data Structures and Algorithms for Data
-Science<br /> STAT 305 Information Management for Data Science<br />
-STAT 362 Advanced Machine Learning for Data Science
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="9"}
-Capstone experience course: <br /> STAT 390 Data Science Project
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="10"}
-
-------------------------------------------------------------------------
-
-[Declaring the Major in Data Science
-major](https://statistics.northwestern.edu/undergraduate/data_science_major/declaring_ds_major.html){preview-link="true"}
-:::
-:::
-:::
-
-## Data Science Minor Requirements {.smaller}
-
-::: columns
-::: {.column width="45%"}
-::: {.fragment .fade-in fragment-index="1"}
-### 6 Required Courses <br /> (No prerequisites)
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="2"}
-Introductory Statistics course: <br /> STAT 202, 210, or AP Statistics
-(4 or 5)
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="3"}
-Core Data Science courses (4): <br /> STAT 301/303-1,-2,03 Data Science
-1, 2, & 3 <br /> STAT 302 Data Visualization
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="4"}
-[Approved Elective Course
-(1)](https://statistics.northwestern.edu/undergraduate/data_science_minor/dsminor_approved_elective.html){preview-link="true"}
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="5"}
-
-------------------------------------------------------------------------
-
-### Core Data Science Courses
-
--   No substitutions or replacements from other departments
--   301/303 courses are taught in sequence starting in the Fall
-:::
-:::
-
-::: {.column width="55%"}
-::: {.fragment .fade-in-then-semi-out fragment-index="6"}
-
-### Learning Objective
-
-Students will be able to effectively and efficiently complete a data
-project from start to finish.
-
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="7"}
-
-------------------------------------------------------------------------
-
-### [Declaring the Minor Data Science](https://statistics.northwestern.edu/undergraduate/data_science_minor/dsminor_declaration.html){preview-link="true"}
-:::
-
-::: {.fragment .fade-in-then-semi-out fragment-index="8"}
-**Minor in Data Science Cohort System**
-
-1.  Cohort assignments are for an academic year (when student will take
-    core sequence and 302)
-
-2.  Assignments are made annually in Spring
-
-3.  Assignments are for the next three academic years --- assigning
-    three years out!
-:::
-:::
-:::
-
-##  {.unnumbered}
-
-<br /> <br />
-
-![](image/pngfind.com-question-marks-png-329882.png){fig-align="center"
-width="700"}
-
-## {background-color="black" background-image="image/Weinberg-Academic Directions-Fair-IE-DSE.png"}
-
-<!-- ![](image/Weinberg-Academic Directions-Fair-IE-DSE.png){.r-stretch} -->
-
-## Questions submitted before session
-
-::: {.fragment .fade-in-then-semi-out}
-What are the guidelines for double counting data science minor classes
-with a major? [Weinberg's Double Counting
-Policy](https://weinberg.northwestern.edu/undergraduate/degree/double-counting-faq.html){preview-link="true"}
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-Is experience with R recommended before taking the R track for the Data
-Science minor?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-Is there a set list of courses from other departments that would satisfy
-the introductory statistics requirement?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-Would taking the MENU MATH 290 sequence then also having to take STAT
-228 be too repetitive/a waste of time? Or would it be reasonable to
-still take MENU MATH 290 even with the data science major?
-:::
-
-##  {.unnumbered}
-
-### Welcome to Northwestern! {.r-fit-text}
-
-![](image/clipart2639199.png){fig-align="center" width="220"}
-
-### And have a great quarter! {.r-fit-text}
-
-##  Questions submitted in the past {.unnumbered}
-
-::: {.fragment .fade-in-then-semi-out}
-What intro courses should I take to explore whether the data science minor is a good fit for my interests?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-Is the statistics 202 class comparable to AP Statistics in terms of syllabus and difficulty? Further, would it be advisable for an Econ Major to take this course in their second quarter of Freshman year if they do not take it in the first?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-What classes would you recommend taking for the fall quarter/first-year if you are planning on pursuing the data science major that begins next year?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-How hard is it to get into the data science minor?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-How do I decide between the R and Python tracks for the data science minor?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-Will first-time coders be put at a disadvantage in the data science minor and have to play catch-up?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-Where do most Statistic graduates go after graduation?
-:::
-
-##  Questions submitted in the past {.unnumbered}
-
-::: {.fragment .fade-in-then-semi-out}
-What are opportunities to study statistics applied to niche areas (i.e. sports statistics/analytics or sabermetrics)?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-Even if I have AP credit, can I still take STAT 202 to get a better grip on the material?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-What are some common double majors along with a Stats major?
-:::
-
-::: {.fragment .fade-in-then-semi-out}
-Among which undergraduate school is the data science minor most popular‚ Weinberg, McCormick, etc? 
-:::
-
+- Measurement error 
+- Data quality 
+- Missing data
+- Baseline model or null model
+- Selecting which models to fit
